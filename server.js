@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 
 import productRoutes from "./routes/Products.js";
 import cartRoutes from "./routes/Cart.js";
+import authRoutes from "./routes/Auth.js"; //  Added Auth Routes
 
 dotenv.config();
 
@@ -16,6 +17,7 @@ app.use(express.json());
 // Routes
 app.use("/products", productRoutes);
 app.use("/cart", cartRoutes);
+app.use("/auth", authRoutes); //  User Register/Login APIs
 
 // Connect to MongoDB
 mongoose
