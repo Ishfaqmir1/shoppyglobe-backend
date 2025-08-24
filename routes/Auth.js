@@ -1,13 +1,13 @@
-import express from "express";
-import bcrypt from "bcryptjs"; // for password hashing
-import jwt from "jsonwebtoken"; // for generating tokens
-import User from "../models/User.model.js"; // import User model
+import express from "express"; 
+import bcrypt from "bcryptjs"; 
+import jwt from "jsonwebtoken"; 
+import User from "../models/User.model.js"; 
 
 const router = express.Router();
 
-// ===============================
-// ✅ REGISTER new user
-// ===============================
+
+//  REGISTER new user
+
 router.post("/register", async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -41,9 +41,7 @@ router.post("/register", async (req, res) => {
   }
 });
 
-// ===============================
-// ✅ LOGIN user
-// ===============================
+//  LOGIN user
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -67,12 +65,20 @@ router.post("/login", async (req, res) => {
 
     // Generate JWT Token
     const token = jwt.sign(
-      { id: user._id }, 
+      { id: user._id },
       process.env.JWT_SECRET, // secret from .env
       { expiresIn: "1h" }     // token validity
     );
 
-    res.json({ message: "Login successful", token });
+    res.json({
+      message: "Login successful",
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+      },
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
