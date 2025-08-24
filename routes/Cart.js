@@ -1,11 +1,12 @@
 import express from "express";
 import Cart from "../models/Cart.model.js";
 import Product from "../models/Product.model.js";
+import auth from "../middleware/auth.js";
 
 const router = express.Router();
 
-// POST - Add product to cart
-router.post("/", async (req, res) => {
+// POST - Add product to cart (Protected)
+router.post("/", auth, async (req, res) => {
   try {
     const { productId, quantity } = req.body;
 
@@ -13,7 +14,8 @@ router.post("/", async (req, res) => {
     const product = await Product.findById(productId);
     if (!product) return res.status(404).json({ error: "Product not found" });
 
-    const cartItem = new Cart({ productId, quantity });
+    // Save to user’s cart
+    const cartItem = new Cart({ userId: req.user.id, productId, quantity });
     const savedCartItem = await cartItem.save();
 
     res.status(201).json(savedCartItem);
@@ -22,13 +24,23 @@ router.post("/", async (req, res) => {
   }
 });
 
-// PUT - Update cart item quantity
-router.put("/:id", async (req, res) => {
+// GET - Get user’s cart
+router.get("/", auth, async (req, res) => {
+  try {
+    const cart = await Cart.find({ userId: req.user.id }).populate("productId");
+    res.json(cart);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// PUT - Update quantity
+router.put("/:id", auth, async (req, res) => {
   try {
     const { quantity } = req.body;
 
-    const updatedItem = await Cart.findByIdAndUpdate(
-      req.params.id,
+    const updatedItem = await Cart.findOneAndUpdate(
+      { _id: req.params.id, userId: req.user.id },
       { quantity },
       { new: true }
     );
@@ -41,10 +53,13 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-// DELETE - Remove cart item
-router.delete("/:id", async (req, res) => {
+// DELETE - Remove item
+router.delete("/:id", auth, async (req, res) => {
   try {
-    const deletedItem = await Cart.findByIdAndDelete(req.params.id);
+    const deletedItem = await Cart.findOneAndDelete({
+      _id: req.params.id,
+      userId: req.user.id,
+    });
 
     if (!deletedItem) return res.status(404).json({ error: "Cart item not found" });
 
