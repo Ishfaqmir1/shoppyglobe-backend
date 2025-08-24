@@ -1,23 +1,23 @@
 import express from "express";
-const app=express();
-
 import mongoose from "mongoose";
-mongoose.connect("mongodb+srv://mirishfaq01:EhoUFIEw44wE7Dc7@cluster0.4m3vt6n.mongodb.net/")
-.then(()=>{console.log("connected to db")})
-.catch((err)=>{
-    console.log("db failed",err);
-})
+import dotenv from "dotenv";
+import productRoutes from "./routes/Products.js";
 
+dotenv.config();
 
-app.get("/",(req,res)=>{
-    res.send("welcome to root route");})
+const app = express();
+const PORT = process.env.PORT || 5000;
 
+// Middleware
+app.use(express.json());
 
-const PORT=8000;
-app.listen(PORT,()=>{
-    console.log(`server is running on port ${PORT}`);
-});
+// Routes
+app.use("/products", productRoutes);
 
-//EhoUFIEw44wE7Dc7
-//mirishfaq01
-//mongodb+srv://mirishfaq01:EhoUFIEw44wE7Dc7@cluster0.4m3vt6n.mongodb.net/
+// Connect to MongoDB
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => {
+    console.log("MongoDB connected...");
+    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+  })
+  .catch(err => console.error(err));
