@@ -41,5 +41,14 @@ It supports product management, shopping cart operations, and user authenticatio
 # github link
 https://github.com/Ishfaqmir1/shoppyglobe-backend.git
 
+## Setup
+1. Clone repo  
+   ```bash
+   git clone https://github.com/Ishfaqmir1/shoppyglobe-backend.gitbackend-shoppy.git
+   cd backend-shoppy
+
+   install dependencies
+
+npm install
 # author 
 ishfaq ahmad mir
