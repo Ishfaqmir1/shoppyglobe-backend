@@ -5,9 +5,8 @@ import auth from "../middleware/auth.js";
 
 const router = express.Router();
 
-// ======================
+
 // REGISTER new user
-// ======================
 router.post("/register", async (req, res) => {
   try {
     const { username, email, password } = req.body;
@@ -27,7 +26,7 @@ router.post("/register", async (req, res) => {
     const newUser = new User({
       username,
       email,
-      password, // raw password only
+      password,
     });
 
     await newUser.save();

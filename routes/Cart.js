@@ -62,7 +62,7 @@ router.get("/", auth, async (req, res) => {
     }
 
     res.json({
-      message: "Cart fetched successfully ✅",
+      message: "Cart fetched successfully",
       items: cart.items.map((i) => ({
         id: i.productId._id,
         name: i.productId.name,
